@@ -27,7 +27,7 @@ export async function registerUserController(req,res)
         if(user)
         {
             return res.json({
-                message:"Already Ragister Email",
+                message:"Already Register Email",
                 error:true,
                 success:false
             })
@@ -46,14 +46,14 @@ export async function registerUserController(req,res)
         const save= await newUser.save()
 
         // sending a email for verification using SendEmail.js 
-        const VerifiyEmailUrl=`${process.env.FRONTEND_URL}/verifiy-email?code=${save?._id}`
+        const verifyEmailUrl=`${process.env.FRONTEND_URL}/verify-email?code=${save?._id}`
 
-        const verifyEmail=await sendEmail({
-            toSend:email,
-            subject:"verifiy email from Combat",
+        const verifyEmail = await sendEmail({
+            to:email,
+            subject:"verify email from Combat",
             html:verifiyEmailTemplet({
                 name,
-                url:VerifiyEmailUrl
+                url:verifyEmailUrl
             })
         })
         return res.json({
