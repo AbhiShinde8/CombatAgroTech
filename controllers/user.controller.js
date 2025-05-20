@@ -74,3 +74,94 @@ export async function registerUserController(req,res)
     }
 }
 
+export async function verifiyEmailController(req,res)
+{
+    try {
+
+        const {code}=req.body;
+
+        const user =await UserModel.findOne({_id:code});
+
+        if(!user)
+        {
+            return res.status(400).json({
+                message:"Invalid Code",
+                error:true,
+                success:false
+            })
+        }
+
+        const updateUser=await UserModel.updateOne({_id:code},{verifiy_email:true})
+
+        return res.json({
+            message:"Verification is Done",
+            error:false,
+            success:true
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message:error.message||error,
+            error:true,
+            success:false
+
+        })
+        
+    }
+}
+
+
+export async function loginController(req,res)
+{
+    try {
+        const {email,password}=req.body
+
+        const user =await UserModel.findOne({email})
+
+        if(!user)
+        {
+            return res.status(400).json({
+                message:"User not register",
+                error:true,
+                success:false
+            })
+
+        }
+        if(user.stetus!=="Active")
+        {
+            return res.status(400).json({
+                message:"Contact To the Admin",
+                error:true,
+                success:false
+            })
+        }
+
+        const checkPassword =  await bcryptjs.compare(password,user.password)
+        if(!checkPassword)
+        {
+            return res.stetus(400).json({
+                message:"Check the Password",
+                error:true,
+                success:false
+            })
+        }
+
+        if(!checkPassword)
+        {
+            return res.status(400).json({
+                message:"Check Your Password...",
+                error:true,
+                success:false   
+            })
+        }
+        
+    } catch (error) {
+        return res.status(500).json({
+            message:error.message||error,
+            success:false,
+            error:true
+        })
+        
+    }
+}
+
