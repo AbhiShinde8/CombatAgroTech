@@ -143,7 +143,7 @@ export async function loginController(req,res)
                 message:"Check the Password",
                 error:true,
                 success:false
-            })
+            });
         }
 
         if(!checkPassword)
