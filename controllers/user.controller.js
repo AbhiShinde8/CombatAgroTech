@@ -168,6 +168,7 @@ export async function loginController(req,res)
             secure:false,
             // secure:true,
             sameSite:'None'
+            
         }
         res.cookie('accesstoken',accesstoken,cookieOptions)
         res.cookie('refreshtoken',refreshtoken,cookieOptions)
