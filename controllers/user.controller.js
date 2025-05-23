@@ -194,3 +194,38 @@ export async function loginController(req,res)
     }
 }
 
+export async function logoutController(req,res)
+{
+    try {
+        const userid=req.userId  //middleware
+
+        const cookieOption={
+            httpOnly:true,
+            secure:false,
+            sameSite:"None"
+
+        }
+
+      res.clearCookie("accesstoken",cookieOption)
+      res.clearCookie("refreshtoken",cookieOption)
+
+      const removeRefreshToken = await UserModel.findByIdAndUpdate(userid,{
+        refresh_token:""
+      }) 
+
+      res.json({
+        message:"User Logout Successfully",
+        error:false,
+        success:true
+      })
+        
+    } catch (error) {
+        return res.json({
+            message:error.message||error,
+            error:true,
+            success:false
+        })
+        
+    }
+}
+
