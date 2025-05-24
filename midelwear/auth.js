@@ -13,7 +13,7 @@ const auth = async (req,res,next)=>{
             })
         }
 
-        const decode = await jwt.verify(token,process.env.SECRET_KEY_ACCESS_TOKEN)
+        const decode = await jwt.verify(token,process.env.SECRET_KEY_ACCESS_TOKEN);
 
         // console.log("Decode ",decode)
 

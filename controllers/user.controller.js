@@ -260,7 +260,7 @@ export async function uploadAvatar(req, res) {
           message: "No image file provided.",
           error: true,
           success: false
-        });
+        })
       }
   
       console.log("Uploading image...");

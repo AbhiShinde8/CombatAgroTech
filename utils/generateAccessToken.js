@@ -8,4 +8,4 @@ const generateAccessToken= async (userId)=>
 
 }
 
-export default generateAccessToken
+export default generateAccessToken;

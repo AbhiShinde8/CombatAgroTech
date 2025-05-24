@@ -27,7 +27,7 @@ const uploadImageCloudinery=async(image)=>{
         }).end(buffer)
 
     })
-    return uploadImage
+    return uploadImage;
 
 }
 
