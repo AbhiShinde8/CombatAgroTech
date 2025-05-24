@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs"
 import verifiyEmailTemplet from "../utils/verifiyEmailTemplet.js";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generatRefreshToken from "../utils/generatRefreshToken.js";
+import uploadImageCloudinery from "../utils/uploadImageCloudinery.js";
 
 export async function registerUserController(req,res)
 {
@@ -229,3 +230,55 @@ export async function logoutController(req,res)
     }
 }
 
+// upload user Avatar 
+ 
+// export async function uploadAvatar(req,res){
+//     try {
+//         const image =req.file
+//         console.log('image',image)
+//         const upload=await uploadImageCloudinery(image)
+//         console.log('upload',upload)
+//         return res.json({
+//             message:"Upload Profile.",
+//             data:upload
+//         })
+//     } 
+//     catch (error) {
+//         return res.status(500).json({
+//             message:error.message||error,
+//             error:true,
+//             success:false
+//         })
+        
+//     }
+// }
+export async function uploadAvatar(req, res) {
+    try {
+      const image = req.file;
+      if (!image) {
+        return res.status(400).json({
+          message: "No image file provided.",
+          error: true,
+          success: false
+        });
+      }
+  
+      console.log("Uploading image...");
+      const upload = await uploadImageCloudinery(image);
+      console.log("Upload result:", upload);
+  
+      return res.json({
+        message: "Profile image uploaded successfully.",
+        data: upload,
+        success: true,
+        error: false
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: error.message || error,
+        error: true,
+        success: false
+      });
+    }
+  }
+  
