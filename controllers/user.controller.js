@@ -254,7 +254,11 @@ export async function logoutController(req,res)
 // }
 export async function uploadAvatar(req, res) {
     try {
-      const image = req.file;
+        const userId=req.userId //auth middlware
+      const image = req.file; //coming from the multer middlwqare
+
+      
+
       if (!image) {
         return res.status(400).json({
           message: "No image file provided.",
@@ -262,14 +266,22 @@ export async function uploadAvatar(req, res) {
           success: false
         })
       }
+      
   
       console.log("Uploading image...");
       const upload = await uploadImageCloudinery(image);
       console.log("Upload result:", upload);
+      const updateUser=await UserModel.findByIdAndUpdate(userId,{
+        avtar:upload.url  //database fild name where we update 
+    }) 
   
       return res.json({
         message: "Profile image uploaded successfully.",
-        data: upload,
+        data: {
+            _id:userId,
+            avatar:upload.url
+
+        },
         success: true,
         error: false
       });
@@ -281,4 +293,45 @@ export async function uploadAvatar(req, res) {
       });
     }
   }
-  
+
+  //update user detials
+
+export async function updateUserDetails(req,res) {
+    try {
+        const userId=req.userId // come from auth middlware
+        const {name,email,mobile,password}=req.body
+
+        let hashPassword=""
+
+        if(password)
+        {
+            const salt=await bcryptjs.genSalt(10)
+             hashPassword=await bcryptjs.hash(password,salt)
+
+        }
+
+        const updateUser=await UserModel.updateOne({_id:userId},{
+            ...(name&&{name:name}) , // if name available user will be update a user name name is comming from body
+            ...(email&&{email:email}),
+            ...(mobile&&{mobile:mobile}),
+            ...(password&&{password:hashPassword})
+        })
+
+        return res.json({
+            message:"User is Updates Successfully...",
+            error:false,
+            success:true,
+            data:updateUser
+        })
+
+        
+    } catch (error) {
+        return res.status(500).json({
+            message:error.message||error,
+            success:false,
+            error:true
+        })
+        
+    }
+    
+}  
