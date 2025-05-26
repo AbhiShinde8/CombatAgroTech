@@ -10,11 +10,11 @@ if(!process.env.RESEND_API)
 
 const resend = new Resend(process.env.RESEND_API);
 
-const sendEmail= async (ToSend,subject,html)=>{
+const sendEmail= async ({to,subject,html})=>{
     try {
         const { data, error } = await resend.emails.send({
-    from: 'comnatagrotech <onboarding@resend.dev>',
-    to: ToSend,
+    from: 'Combat AgroTech <onboarding@resend.dev>',
+    to: to,
     subject: subject,
     html: html
 });
