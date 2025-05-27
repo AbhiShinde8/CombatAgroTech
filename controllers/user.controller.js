@@ -413,7 +413,7 @@ export async function verifiyForgotPasswordOtp(req,res)
             })
         }
 
-        const currentTime= new Date()
+        const currentTime= new Date().toISOString()
 
         if(user.forgot_password_expiry<currentTime)
         {
@@ -424,7 +424,7 @@ export async function verifiyForgotPasswordOtp(req,res)
              })
         }
 
-        if(otp!==forgot_password_otp)
+        if(otp!==user.forgot_password_otp)
         {
             return res.status(400).json({
                 message:"Invalid OTP",
@@ -438,6 +438,65 @@ export async function verifiyForgotPasswordOtp(req,res)
 
         return res.json({
             message:"Verification is Successfully..",
+            error:false,
+            success:true
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message:error.message||error,
+            error:true,
+            success:false
+        })
+        
+    }
+}
+
+// reset the password
+
+export async function resetPassword(req,res)
+{
+    try {
+
+        const {email,newPassword,confirmPassword}=req.body||{}
+
+        if(!email||!newPassword||!confirmPassword)
+        {
+            return res.status(400).json({
+                message:"Provide requird field Email,New Password,Confirm Password",
+                error:true,
+                success:false
+            })
+        }
+
+        const user = await UserModel.findOne({email})
+
+        if(!user)
+        {
+            return res.json({
+                message:"Email is not available",
+                error:true,
+                success:false
+            })
+        }
+
+        if(newPassword!==confirmPassword)
+        {
+            return res.status(400).json({
+                message:"newPassword and confirmPassword are not same",
+                error:true,
+                success:false
+            })
+        }
+
+        const salt=await bcryptjs.genSalt(10)
+        const hashpassword=await bcryptjs.hash(newPassword,salt)
+
+        const update=await UserModel.findByIdAndUpdate(user._id,{
+            password:hashpassword
+        })
+        return res.json({
+            message:'Password Updated Successfully...',
             error:false,
             success:true
         })
