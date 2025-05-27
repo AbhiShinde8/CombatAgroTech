@@ -5,6 +5,8 @@ import verifiyEmailTemplet from "../utils/verifiyEmailTemplet.js";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generatRefreshToken from "../utils/generatRefreshToken.js";
 import uploadImageCloudinery from "../utils/uploadImageCloudinery.js";
+import generateOtp from "../utils/generateOtp.js";
+import forgotPasswordTemplet from "../utils/forgotPasswordTemplet.js";
 
 export async function registerUserController(req,res)
 {
@@ -335,3 +337,53 @@ export async function updateUserDetails(req,res) {
     }
     
 }  
+
+//Forgot password not login
+
+export async function forgotPasswordController(req,res)
+{
+    try {
+
+        const {email}=req.body||{}
+
+        const user=await UserModel.findOne({email})
+
+        if(!user)
+        {
+            return res.status(400).json({
+                message:"Email is not Available",
+                error:true,
+                success:true
+            })
+        }
+
+        const otp=generateOtp()
+        const expireTime=new Date()+60*60*1000;  // 1hr set time to expire convert mi sec 60*60*1000
+        const update=await UserModel.findByIdAndUpdate(user._id,{
+            forgot_password_otp:otp,
+            forgot_password_expiry:new Date(expireTime).toISOString()
+        })
+        await sendEmail({
+            to:email,
+            subject:"Forgot Password from Combat Agro Tech",
+            html:forgotPasswordTemplet({
+                name:user.name,
+                otp:otp
+            })
+        })
+
+        return res.json({
+            message:"Check Your Email",
+            error:false,
+            success:true
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message:error.message,
+            error:true,
+            success:false
+        })
+        
+    }
+}

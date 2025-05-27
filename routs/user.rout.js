@@ -1,5 +1,5 @@
 import {Router} from "express"
-import { loginController, logoutController, registerUserController, updateUserDetails, uploadAvatar, verifiyEmailController } from "../controllers/user.controller.js"
+import { forgotPasswordController, loginController, logoutController, registerUserController, updateUserDetails, uploadAvatar, verifiyEmailController } from "../controllers/user.controller.js"
 import auth from "../midelwear/auth.js";
 import upload from "../midelwear/multer.js";
  const userRouter=Router()
@@ -10,5 +10,6 @@ import upload from "../midelwear/multer.js";
  userRouter.get('/logout',auth,logoutController)
  userRouter.put('/upload-avatar',auth,upload.single('avatar'),uploadAvatar)
  userRouter.put('/update-user',auth,updateUserDetails)
+ userRouter.put('/forgot-password',forgotPasswordController)
 
  export default userRouter;
