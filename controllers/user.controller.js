@@ -483,7 +483,7 @@ export async function resetPassword(req,res)
         if(newPassword!==confirmPassword)
         {
             return res.status(400).json({
-                message:"newPassword and confirmPassword are not same",
+                message:"newPassword and confirmPassword are must be same",
                 error:true,
                 success:false
             })
