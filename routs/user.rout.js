@@ -1,5 +1,5 @@
 import {Router} from "express"
-import { forgotPasswordController, loginController, logoutController, registerUserController, resetPassword, updateUserDetails, uploadAvatar, verifiyEmailController, verifiyForgotPasswordOtp } from "../controllers/user.controller.js"
+import { forgotPasswordController, loginController, logoutController, refreshToken, registerUserController, resetPassword, updateUserDetails, uploadAvatar, verifiyEmailController, verifiyForgotPasswordOtp } from "../controllers/user.controller.js"
 import auth from "../midelwear/auth.js";
 import upload from "../midelwear/multer.js";
  const userRouter=Router()
@@ -13,5 +13,6 @@ import upload from "../midelwear/multer.js";
  userRouter.put('/forgot-password',forgotPasswordController)
  userRouter.put('/verifiy_forgot-password',verifiyForgotPasswordOtp)
  userRouter.put('/reset-password',resetPassword)
+ userRouter.post('/refresh-token',refreshToken)
 
  export default userRouter;

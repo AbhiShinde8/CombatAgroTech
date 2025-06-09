@@ -7,6 +7,7 @@ import generatRefreshToken from "../utils/generatRefreshToken.js";
 import uploadImageCloudinery from "../utils/uploadImageCloudinery.js";
 import generateOtp from "../utils/generateOtp.js";
 import forgotPasswordTemplet from "../utils/forgotPasswordTemplet.js";
+import jwt from "jsonwebtoken"
 
 export async function registerUserController(req,res)
 {
@@ -19,7 +20,7 @@ export async function registerUserController(req,res)
 
 
         if(!name || !email || !password)
-        {
+        { 
             return res.status(400).json({
                 message:"Provide Name ,Email,Password",
                 error:true,
@@ -509,4 +510,56 @@ export async function resetPassword(req,res)
         })
         
     }
+}
+
+// refresh token controller
+
+export async function refreshToken(req,res)
+{
+
+    const refreshToken = req.cookies?.refreshtoken || req.headers?.authorization?.split(" ")[1];
+  //[Bearer token]
+
+    if(!refreshToken)
+    {
+        return res.status(401).json({
+            message:"Invalid Token",
+            error:true,
+            success:false
+        })
+    }
+
+
+    // console.log("refreshToeken",refreshToken)
+    // if token was available 
+
+    const verifyToken=await jwt.verify(refreshToken,process.env.SECRET_KEY_REFRESH_TOKEN)
+
+    if(!verifyToken)
+    {
+        return res.status(401).json({
+            message:"token is expired",
+            error:true,
+            success:false
+        })
+    }
+
+    // console.log("verifiy Token",verifyToken)
+    const userId=verifyToken.id
+    const newAccessToken = await generateAccessToken(userId)
+    const cookiesOption={
+        httpOnly:true,
+        secure:true,
+        sameSite:"None"
+    }
+    res.cookie('accessToken',newAccessToken,cookiesOption)
+
+    return res.json({
+        message:"New Access Token Genereted",
+        error:false,
+        success:true,
+        data:{
+            accessToken:newAccessToken
+        }
+    })
 }
